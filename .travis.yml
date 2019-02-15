@@ -1,0 +1,37 @@
+language: node_js
+node_js: 8
+    
+jobs:
+  include:
+    - stage: Tests
+      name: Eslint
+      script: echo "Eslint"
+    - stage: Tests
+      name: Unit tests
+      script: echo "Unit tests"
+
+    - stage: Build
+      name: Build Dev
+      # if: branch = travis-deployment AND type = push
+      if: branch != master
+      script: echo "Build dev"
+      env:
+        - FOO=develop
+      deploy: &firebase
+        provider: firebase
+        token:
+          secure: pbdRxWziWlUNfmrNzdsp14+k46+4Ze6zJhGKonVz4Hyzwe5PIlBp8xHmFRHnrYGH4CiHBw4vJ0dS3E5hjBaki39cUNTFySiNd4Adt5+G7KnA/VKaWS+bNmBpZMnWqAWqSMzeYT6CpQ0n6XqpP1+W1j9LpbGkD+aobFOpxa2EPnFbSUQ5Ri8lN77cMDYVCKUDjw1Z8Bej/eCucd2XC1vXWoJYeGbn5YIKhhNgC1MelaiXMs9Krjv6lUYasofxRif49mcYOM5Shrj1diKYubHNezvtHVM9pjPJNhASnzm39haY3rYPiF6y2iSZwKYqX6MqcMHgtcsr66x0i2wvFmp7ccMgNycOy9JWGelTQnHQ8LuwyAGi/0GomLnuzURvOQoC+09YK5eS3sEh+IXPwqCFDtecnB+EnlvcDV5y7NDfNr8aUwCQte4KABnuLywVEtXoyiWT+fbiOiWxe5hXvG5MY5lQNtjmOZ9k/F4GTFjX8UUJvck0fdXSpKOpLWpubOF1bXBmTpheIAdOEKu3CFXFZzVyD8ZnpJwurOah8w85715Cf9OC7/dP7rgJA0ZGN6e+AvXHxRgYesCqor8+DPhrMqCfcxjadhCaDJ87YsnXUY74uacgwQJO6p+nIgNQb6240uOrhzIvZrX54qMSlzfVWMEleTwHFMcGRRobaDgB4RE=
+        project: "hourofcodeua-dev"
+        skip_cleanup: true
+        on:
+          branch: develop
+
+    - stage: Build
+      name: Build Prod
+      if: branch = master
+      script: echo "Build prod"
+      env:
+        - FOO=prod
+      deploy:
+        <<: *firebase
+        project: "hourofcodeua-dev"
